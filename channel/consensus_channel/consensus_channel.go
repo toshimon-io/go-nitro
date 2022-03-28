@@ -346,6 +346,12 @@ func (c *ConsensusChannel) recoverSigner(vars Vars, sig state.Signature) (common
 	state := vars.asState(c.fp)
 	return state.RecoverSigner(sig)
 }
+
+// Participants returns the channel participants.
+func (c *ConsensusChannel) Participants() []types.Address {
+	return c.fp.Participants
+}
+
 func (c *ConsensusChannel) Accept(p SignedProposal) error {
 	panic("UNIMPLEMENTED")
 }
