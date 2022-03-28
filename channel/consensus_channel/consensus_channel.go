@@ -1,6 +1,7 @@
 package consensus_channel
 
 import (
+	"encoding/json"
 	"fmt"
 	"math/big"
 	"sort"
@@ -363,4 +364,44 @@ func (c *ConsensusChannel) Participants() []types.Address {
 
 func (c *ConsensusChannel) Accept(p SignedProposal) error {
 	panic("UNIMPLEMENTED")
+}
+
+// jsonConsensusChannel replaces ConsensusChannel's private fields with public ones,
+// making it suitable for serialization
+type jsonConsensusChannel struct {
+	Id            types.Destination
+	MyIndex       ledgerIndex
+	FP            state.FixedPart
+	Current       SignedVars
+	ProposalQueue []SignedProposal
+}
+
+// MarshalJSON returns a JSON representation of the ConsensusChannel
+func (c ConsensusChannel) MarshalJSON() ([]byte, error) {
+	jsonCh := jsonConsensusChannel{
+		Id:            c.Id,
+		MyIndex:       c.myIndex,
+		FP:            c.fp,
+		Current:       c.current,
+		ProposalQueue: c.proposalQueue,
+	}
+	return json.Marshal(jsonCh)
+}
+
+// UnmarshalJSON populates the receiver with the
+// json-encoded data
+func (c *ConsensusChannel) UnmarshalJSON(data []byte) error {
+	var jsonCh jsonConsensusChannel
+	err := json.Unmarshal(data, &jsonCh)
+	if err != nil {
+		return fmt.Errorf("error unmarshaling channel data")
+	}
+
+	c.Id = jsonCh.Id
+	c.myIndex = jsonCh.MyIndex
+	c.fp = jsonCh.FP
+	c.current = jsonCh.Current
+	c.proposalQueue = jsonCh.ProposalQueue
+
+	return nil
 }
