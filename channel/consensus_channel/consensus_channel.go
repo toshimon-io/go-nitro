@@ -25,6 +25,8 @@ type ConsensusChannel struct {
 	myIndex ledgerIndex
 	fp      state.FixedPart
 
+	Id types.Destination
+
 	// variables
 	current       SignedVars       // The "consensus state", signed by both parties
 	proposalQueue []SignedProposal // A queue of proposed changes, starting from the consensus state
@@ -37,6 +39,12 @@ func newConsensusChannel(
 	outcome LedgerOutcome,
 	signatures [2]state.Signature,
 ) (ConsensusChannel, error) {
+
+	cId, err := fp.ChannelId()
+	if err != nil {
+		return ConsensusChannel{}, err
+	}
+
 	vars := Vars{TurnNum: 0, Outcome: outcome.clone()}
 
 	leaderAddr, err := vars.asState(fp).RecoverSigner(signatures[leader])
@@ -62,6 +70,7 @@ func newConsensusChannel(
 
 	return ConsensusChannel{
 		fp:            fp,
+		Id:            cId,
 		myIndex:       myIndex,
 		proposalQueue: make([]SignedProposal, 0),
 		current:       current,
