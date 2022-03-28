@@ -14,14 +14,14 @@ var ErrInvalidProposalSignature = fmt.Errorf("invalid signature for proposal")
 var ErrInvalidTurnNum = fmt.Errorf("the proposal turn number is not the next turn number")
 
 type FollowerChannel struct {
-	consensusChannel
+	ConsensusChannel
 }
 
 // NewFollowerChannel constructs a new FollowerChannel
 func NewFollowerChannel(fp state.FixedPart, outcome LedgerOutcome, signatures [2]state.Signature) (FollowerChannel, error) {
 	channel, err := newConsensusChannel(fp, follower, outcome, signatures)
 
-	return FollowerChannel{consensusChannel: channel}, err
+	return FollowerChannel{ConsensusChannel: channel}, err
 }
 
 // ConsensusTurnNum returns the turn number of the current consensus state
