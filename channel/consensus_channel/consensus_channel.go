@@ -70,7 +70,7 @@ func newConsensusChannel(
 }
 
 // ConsensusTurnNum returns the turn number of the current consensus state
-func (c *consensusChannel) ConsensusTurnNum() uint64 {
+func (c *ConsensusChannel) ConsensusTurnNum() uint64 {
 	return c.current.TurnNum
 }
 
