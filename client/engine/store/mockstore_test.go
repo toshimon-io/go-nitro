@@ -1,6 +1,7 @@
 package store_test
 
 import (
+	"reflect"
 	"testing"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -150,5 +151,26 @@ func TestConsensusChannelStore(t *testing.T) {
 	if got.Id != want.Id {
 		t.Fatalf("expected to retrieve same channel Id as was passed in, but didn't")
 	}
+
 	// TODO check that got and want are deeply equal
+	if !reflect.DeepEqual(got, &want.ConsensusChannel) {
+		t.Errorf("\nexpected:\n%v\ngot:\n%v", &want.ConsensusChannel, got)
+
+		t.Error("equalNonces: ", reflect.DeepEqual(got.Nonce(), (&want).Nonce()))
+		t.Error("equalFPs: ", reflect.DeepEqual(got.FP(), want.FP()))
+		t.Errorf("\nwantFP:\n%v\ngotFP:\n%v", want.FP(), got.FP())
+
+		t.Error("gotID: ", got.ChainID(), "wantID: ", want.ChainID())
+		t.Error("gotNonce: ", got.Nonce(), "wantNonce: ", want.Nonce())
+
+		// gotT := reflect.TypeOf(*got)
+		// wantT := reflect.TypeOf(&want.ConsensusChannel)
+
+		// t.Errorf("\ngotType:\n%v, kind: %v", gotT, gotT.Kind())
+		// t.Errorf("\nwantType:\n%v", wantT)
+
+		// for _, f := range reflect.VisibleFields(gotT) {
+		// 	t.Errorf("%v:\t\t%v", f.Name, reflect.ValueOf(*got).FieldByName(f.Name))
+		// }
+	}
 }

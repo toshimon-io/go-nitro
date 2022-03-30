@@ -47,7 +47,7 @@ func NewObjective(request ObjectiveRequest, preApprove bool) (Objective, error) 
 
 	objective, err := constructFromState(preApprove,
 		state.State{
-			ChainId:           big.NewInt(0), // TODO
+			ChainId:           big.NewInt(6), // TODO
 			Participants:      []types.Address{request.MyAddress, request.CounterParty},
 			ChannelNonce:      big.NewInt(request.Nonce),
 			AppDefinition:     request.AppDefinition,

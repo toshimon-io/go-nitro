@@ -33,6 +33,16 @@ type ConsensusChannel struct {
 	proposalQueue []SignedProposal // A queue of proposed changes, starting from the consensus state
 }
 
+func (c *ConsensusChannel) ChainID() *big.Int {
+	return c.fp.ChainId
+}
+func (c *ConsensusChannel) Nonce() *big.Int {
+	return c.fp.ChannelNonce
+}
+func (c *ConsensusChannel) FP() state.FixedPart {
+	return c.fp
+}
+
 // newConsensusChannel constructs a new consensus channel, validating its input by checking that the signatures are as expected on a prefund setup state
 func newConsensusChannel(
 	fp state.FixedPart,
