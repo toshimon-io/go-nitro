@@ -73,7 +73,7 @@ type ChainService interface {
 	// SubscribeToEvents creates and returs a subscription channel.
 	SubscribeToEvents(types.Address) <-chan Event
 	// SendTransaction is for sending transactions with the chain service
-	SendTransaction(protocols.ChainTransaction)
+	SendTransaction(protocols.ChainTransaction) error
 }
 
 type chainServiceBase struct {

@@ -2,6 +2,7 @@ package chainservice
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"math/big"
 
@@ -59,7 +60,7 @@ func (ecs *EthChainService) defaultTxOpts() *bind.TransactOpts {
 }
 
 // SendTransaction sends the transaction and blocks until it has been submitted.
-func (ecs *EthChainService) SendTransaction(tx protocols.ChainTransaction) []*ethTypes.Transaction {
+func (ecs *EthChainService) SendTransaction(tx protocols.ChainTransaction) error {
 	switch tx := tx.(type) {
 	case protocols.DepositTransaction:
 		ethTxs := []*ethTypes.Transaction{}
@@ -89,7 +90,7 @@ func (ecs *EthChainService) SendTransaction(tx protocols.ChainTransaction) []*et
 			}
 			ethTxs = append(ethTxs, ethTx)
 		}
-		return ethTxs
+		return nil
 	case protocols.WithdrawAllTransaction:
 		state := tx.SignedState.State()
 		signatures := tx.SignedState.Signatures()
@@ -97,14 +98,14 @@ func (ecs *EthChainService) SendTransaction(tx protocols.ChainTransaction) []*et
 		nitroVariablePart := NitroAdjudicator.ConvertVariablePart(state.VariablePart())
 		nitroSignatures := []NitroAdjudicator.IForceMoveSignature{NitroAdjudicator.ConvertSignature(signatures[0]), NitroAdjudicator.ConvertSignature(signatures[1])}
 
-		ethTx, err := ecs.na.ConcludeAndTransferAllAssets(ecs.defaultTxOpts(), nitroFixedPart, nitroVariablePart, 1, []uint8{0, 0}, nitroSignatures)
+		_, err := ecs.na.ConcludeAndTransferAllAssets(ecs.defaultTxOpts(), nitroFixedPart, nitroVariablePart, 1, []uint8{0, 0}, nitroSignatures)
 		if err != nil {
 			panic(err)
 		}
-		return []*ethTypes.Transaction{ethTx}
+		return nil
 
 	default:
-		panic("unexpected chain transaction")
+		return fmt.Errorf("unexpected transaction type %T", tx)
 	}
 }
 
