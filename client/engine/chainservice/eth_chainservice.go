@@ -72,21 +72,21 @@ func (ecs *EthChainService) SendTransaction(tx protocols.ChainTransaction) error
 			} else {
 				tokenTransactor, err := Token.NewTokenTransactor(tokenAddress, ecs.chain)
 				if err != nil {
-					panic(err)
+					return err
 				}
 				_, err = tokenTransactor.Approve(ecs.defaultTxOpts(), ecs.naAddress, amount)
 				if err != nil {
-					panic(err)
+					return err
 				}
 			}
 			holdings, err := ecs.na.Holdings(&bind.CallOpts{}, tokenAddress, tx.ChannelId())
 			if err != nil {
-				panic(err)
+				return err
 			}
 
 			ethTx, err := ecs.na.Deposit(txOpts, tokenAddress, tx.ChannelId(), holdings, amount)
 			if err != nil {
-				panic(err)
+				return err
 			}
 			ethTxs = append(ethTxs, ethTx)
 		}
@@ -100,7 +100,7 @@ func (ecs *EthChainService) SendTransaction(tx protocols.ChainTransaction) error
 
 		_, err := ecs.na.ConcludeAndTransferAllAssets(ecs.defaultTxOpts(), nitroFixedPart, nitroVariablePart, 1, []uint8{0, 0}, nitroSignatures)
 		if err != nil {
-			panic(err)
+			return err
 		}
 		return nil
 
